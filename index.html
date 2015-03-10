@@ -1,0 +1,50 @@
+<html>
+	<head>
+		<title>Heartbeat | Crawler</title>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+		<style type="text/css">
+			*{
+				font-family : 'Raleway';
+			}
+			body {
+				text-align: center;
+			}
+			#master_counter {
+				font-family : 'Roboto';
+				font-weight: 300;
+				font-size : 200px;
+			}
+			small {
+				font-size: 16px;
+			}
+		
+		</style>
+
+	</head>
+	<body>
+		<br /><br /><br /><br /><br /><br /><br /><br />
+		Total channels crawled
+		<br />
+		<span id="master_counter"></span>
+		<script>
+			var counter = document.getElementById('master_counter'),
+				last_count;
+
+			setInterval(function ()  {
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function () {
+					if (xhr.readyState + xhr.status === 204) {
+						counter.innerHTML = xhr.responseText.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+						if (last_count) {
+							counter.innerHTML += '<br /><small>' + (+xhr.responseText - last_count) + ' channels per second</small>';
+						}
+						last_count = +xhr.responseText;
+					}
+				};
+				xhr.open('GET', '/count', true);
+				xhr.send();
+			}, +location.hash.substring(1) || 1000);
+		</script>
+	</body>
+</html>
